@@ -1,0 +1,73 @@
+<div class="sidebar flex h-full bg-gray-200 w-56 flex-col text-sm list-none">
+  <ul class="sidebar-links">
+    <li>
+      <a
+        class="sidebar-link"
+        [ngClass]="{ active: currentLink === 'home' }"
+        routerLink=""
+        id="home"
+        >Don't be afraid, it will be fun</a
+      >
+    </li>
+    <li>
+      <div class="sidebar-group">
+        <p class="sidebar-heading">Pathfinding</p>
+        <ul class="sidebar-group-items">
+          <li>
+            <a
+              [ngClass]="{ active: currentLink === 'pathfinding' }"
+              id="pathfinding"
+              class="sidebar-link"
+              routerLink="pathfinding"
+              >What's pathfinding?</a
+            >
+            <ul class="sidebar-sub-headers">
+              <li class="sidebar-sub-header">
+                <a
+                  [ngClass]="{ active: currentLink === 'dijkstra' }"
+                  id="dijkstra"
+                  class="sidebar-link"
+                  routerLink="dijkstra"
+                  >Dijkstra</a
+                >
+              </li>
+              <li class="sidebar-sub-header">
+                <a
+                  [ngClass]="{ active: currentLink === 'a-star' }"
+                  id="a-star"
+                  class="sidebar-link"
+                  routerLink="a-star"
+                  >A star</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li>
+      <div class="sidebar-group">
+        <p class="sidebar-heading">Sorting</p>
+        <ul class="sidebar-group-items">
+          <li>
+            <a class="sidebar-link" routerLink="pathfinding" id="pathfinding"
+              >What's sorting?</a
+            >
+            <ul class="sidebar-sub-headers">
+              <li class="sidebar-sub-header">
+                <a class="sidebar-link" routerLink="dijkstra" id="dijkstra"
+                  >Dijkstra</a
+                >
+              </li>
+              <li class="sidebar-sub-header">
+                <a class="sidebar-link" routerLink="a-star" id="a-star"
+                  >A star</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>

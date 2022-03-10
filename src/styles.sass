@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base
+@tailwind components
+@tailwind utilities
+
+html, body, app-root
+    height: 100%
+    width: 100%
+    padding: 0px
+    margin: 0px
+    display: flex
+
+app-pathfinding
+    flex: 1 1 0px
+
+.btn-primary
+    @apply flex items-center justify-between inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out

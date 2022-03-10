@@ -1,0 +1,10 @@
+<div
+  class="node text-xs flex justify-center items-center"
+  [ngClass]="{
+    start: node.isStart,
+    end: node.isEnd,
+    visited: node.visited && !node.isStart && !node.isEnd,
+    'node-in-path': node.isInPath && !node.isStart && !node.isEnd,
+    obstacle: node.obstacle
+  }"
+></div>

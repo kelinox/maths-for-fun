@@ -1,0 +1,8 @@
+<div class="flex flex-col" *ngIf="nodes.length > 0">
+  <div class="flex" *ngFor="let row of nodes; index as i">
+    <app-grid-item
+      *ngFor="let node of row; index as j"
+      [node]="node"
+    ></app-grid-item>
+  </div>
+</div>
