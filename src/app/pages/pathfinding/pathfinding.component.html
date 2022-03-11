@@ -57,15 +57,36 @@
       </button>
     </div>
     <div class="mr-4 flex items-center mb-8" *ngIf="nodes.length > 0">
-      <label class="mr-4" for="algo">Select the algo</label>
-      <select
-        [(ngModel)]="algo"
-        id="algo"
-        class="w-32 form-select appearance-none block px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-      >
-        <option value="dijkstra">Dijkstra</option>
-        <option value="a-star">A star</option>
-      </select>
+      <div class="flex items-center mr-4">
+        <label class="mr-4" for="algo">Select the algo</label>
+        <select
+          [(ngModel)]="algo"
+          id="algo"
+          class="w-32 form-select appearance-none block px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+        >
+          <option value="dijkstra">Dijkstra</option>
+          <option value="a-star">A star</option>
+        </select>
+      </div>
+      <div class="flex items-center">
+        <label
+          for="toggle-example"
+          class="flex items-center cursor-pointer relative"
+        >
+          <input
+            type="checkbox"
+            id="toggle-example"
+            class="sr-only"
+            [(ngModel)]="animation"
+          />
+          <div
+            class="toggle-bg bg-gray-200 border-2 border-gray-200 h-6 w-11 rounded-full"
+          ></div>
+          <span class="ml-3 text-gray-900 text-sm font-medium"
+            >Activate animation</span
+          >
+        </label>
+      </div>
     </div>
     <app-grid [nodes]="nodes"></app-grid>
   </div>

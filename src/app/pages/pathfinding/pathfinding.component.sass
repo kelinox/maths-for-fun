@@ -1,2 +1,13 @@
 .input
     @apply p-1 border-2 border-gray-200 rounded-md outline-none focus:border-blue-500
+
+.toggle-bg:after
+    content: ''
+    @apply absolute top-0.5 left-0.5 bg-white border border-gray-300 rounded-full h-5 w-5 transition shadow-sm
+
+input:checked + .toggle-bg:after
+    transform: translateX(100%)
+    @apply border-white
+
+input:checked + .toggle-bg
+    @apply bg-blue-500 border-blue-500 shadow-lg

@@ -1,4 +1,11 @@
-import { Injectable, NgModule } from '@angular/core';
+import { Injectable } from '@angular/core';
+import {
+  removeElement,
+  getClosestNodeToEnd,
+  getClosestNodeToStartWithEndDistance,
+  getNeighbors,
+  setDistanceToStart,
+} from '../extensions';
 import Node from '../models/node';
 import Point from '../models/point';
 import { PathFindingService } from './path-finding.service';
@@ -12,51 +19,71 @@ export class AStarService extends PathFindingService {
     columns: number,
     rows: number
   ) {
+    const tmpNodes: Node[][] = JSON.parse(JSON.stringify(nodes));
     this.columns = columns;
     this.rows = rows;
     this.start = start;
     this.end = end;
-    this.graph = createGraph(nodes, this.rows, this.columns);
-    this.graph[start.y * this.rows + start.x].distanceToStart = 0;
-    this.graph[end.y * this.rows + end.x].distanceToEnd = 0;
-    this.calculateDistanceToEnd();
+    tmpNodes[start.y][start.x].distanceToStart = 0;
+    tmpNodes[end.y][end.x].distanceToEnd = 0;
+    this.calculateDistanceToEnd(tmpNodes);
 
-    let currentNode = this.graph[start.y * this.rows + start.x];
-    const endNode = this.graph[end.y * this.rows + end.x];
+    let currentNode = tmpNodes[start.y][start.x];
+    const endNode = tmpNodes[end.y][end.x];
     const visitedNodes: Node[] = [];
     let nodesToVisite: Node[] = [];
 
-    while (currentNode !== endNode && !visitedNodes.includes(currentNode)) {
-      var neighbors = this.getNeighbors(currentNode, this.rows, this.columns);
+    while (
+      currentNode !== endNode &&
+      !visitedNodes.includes(currentNode) &&
+      currentNode !== undefined
+    ) {
+      var neighbors = getNeighbors(currentNode, this.rows, this.columns);
 
       for (let i = 0; i < neighbors.length; i++) {
-        if (start.x !== neighbors[i].x || start.y !== neighbors[i].x) {
-          let n = this.graph[neighbors[i].y * this.rows + neighbors[i].x];
-          nodesToVisite.push(n);
+        const node = setDistanceToStart(
+          tmpNodes,
+          neighbors[i],
+          start,
+          currentNode.distanceToStart
+        ); //
+        tmpNodes[neighbors[i].y][neighbors[i].x] = node;
 
-          if (!n.obstacle && n.distanceToStart === Number.MAX_SAFE_INTEGER)
-            n.distanceToStart = currentNode.distanceToStart + n.weight;
-        }
+        console.log(nodesToVisite);
+        console.log(node);
+        if (
+          !node.obstacle &&
+          nodesToVisite.find(
+            (n) =>
+              n.coordinates.x === node.coordinates.x &&
+              n.coordinates.y === node.coordinates.y
+          ) === undefined
+        )
+          nodesToVisite.push(node);
       }
 
       currentNode.visited = true;
       visitedNodes.push(currentNode);
-      currentNode = getClosestNodeToStart(nodesToVisite);
+      currentNode = getClosestNodeToStartWithEndDistance(nodesToVisite);
       nodesToVisite = removeElement(nodesToVisite, currentNode);
     }
+
+    if (currentNode === endNode) nodes[end.y][end.x].visited = true;
 
     return visitedNodes;
   }
 
-  private calculateDistanceToEnd() {
-    let currentNode = this.graph[this.end.y * this.rows + this.end.x];
+  private calculateDistanceToEnd(nodes: Node[][]) {
+    let currentNode = nodes[this.end.y][this.end.x];
+    let nodeToVisit: Node[] = [];
 
     while (currentNode !== undefined) {
-      var neighbors = this.getNeighbors(currentNode, this.rows, this.columns);
+      var neighbors = getNeighbors(currentNode, this.rows, this.columns);
 
       for (let i = 0; i < neighbors.length; i++) {
         if (this.end.x !== neighbors[i].x || this.end.y !== neighbors[i].y) {
-          let n = this.graph[neighbors[i].y * this.rows + neighbors[i].x];
+          let n = nodes[neighbors[i].y][neighbors[i].x];
+          nodeToVisit.push(n);
           if (n.distanceToEnd === Number.MAX_SAFE_INTEGER) {
             n.distanceToEnd = currentNode.distanceToEnd + n.weight;
           }
@@ -64,59 +91,8 @@ export class AStarService extends PathFindingService {
       }
 
       currentNode.distanceToEndCalculated = true;
-      currentNode = this.getClosestNodeToEnd(this.graph);
+      currentNode = getClosestNodeToEnd(nodeToVisit);
+      nodeToVisit = removeElement(nodeToVisit, currentNode);
     }
   }
 }
-
-const getClosestNodeToStart = (nodes: Node[]) =>
-  nodes
-    .filter((n) => !n.visited && !n.obstacle)
-    .sort((a, b) => {
-      if (
-        a.distanceToStart + a.distanceToEnd <
-        b.distanceToStart + b.distanceToEnd
-      ) {
-        return -1;
-      }
-
-      return 1;
-    })[0];
-
-const createGraph = (
-  nodes: Node[][],
-  nbRows: number,
-  nbColumns: number
-): Node[] => {
-  var graph = [];
-  for (let row = 0; row < nbRows; row++) {
-    for (let col = 0; col < nbColumns; col++) {
-      graph.push({
-        visited: false,
-        isStart: nodes[row][col].isStart,
-        isEnd: nodes[row][col].isEnd,
-        weight: nodes[row][col].weight,
-        coordinates: {
-          x: nodes[row][col].coordinates.x,
-          y: nodes[row][col].coordinates.y,
-        },
-        isInPath: false,
-        distanceToStart: nodes[row][col].distanceToStart,
-        distanceToEnd: nodes[row][col].distanceToEnd,
-        distanceToEndCalculated: false,
-        obstacle: nodes[row][col].weight > 150,
-      });
-    }
-  }
-
-  return graph;
-};
-
-const removeElement = (array: Node[], elementToRemove: Node): Node[] => {
-  const index = array.indexOf(elementToRemove);
-  if (index > -1) {
-    array.splice(index, 1); // 2nd parameter means remove one item only
-  }
-
-  return array;
-};

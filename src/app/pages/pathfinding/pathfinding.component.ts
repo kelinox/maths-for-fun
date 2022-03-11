@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { getPathFromStartToEnd } from 'src/app/extensions';
 import Node from 'src/app/models/node';
 import Point from 'src/app/models/point';
 import { AStarService } from 'src/app/services/a-star.service';
@@ -27,6 +28,7 @@ export class PathfindingComponent implements OnInit {
   running = false;
   timeouts: any[] = [];
   algo: string = '';
+  animation = true;
 
   constructor(
     private readonly dijkstraService: DijkstraService,
@@ -116,41 +118,52 @@ export class PathfindingComponent implements OnInit {
   }
 
   private showVisitedNodes(visitedNodes: Node[]) {
-    console.log(visitedNodes);
     for (let i = 0; i < visitedNodes.length; i++) {
-      const t = setTimeout(() => {
+      if (this.animation) {
+        const t = setTimeout(() => {
+          this.nodes[visitedNodes[i].coordinates.y][
+            visitedNodes[i].coordinates.x
+          ] = visitedNodes[i];
+
+          if (i === visitedNodes.length - 1) this.getPathFromStartToEnd();
+        }, 1 * i);
+        this.timeouts.push(t);
+      } else {
         this.nodes[visitedNodes[i].coordinates.y][
           visitedNodes[i].coordinates.x
         ] = visitedNodes[i];
+      }
+    }
 
-        if (i === visitedNodes.length - 1) this.getPathFromStartToEnd();
-      }, 1 * i);
-      this.timeouts.push(t);
+    if (!this.animation) {
+      this.getPathFromStartToEnd();
     }
   }
 
   private getPathFromStartToEnd() {
-    let path: Node[] = [];
-
-    switch (this.algo) {
-      case 'dijkstra':
-        path = this.dijkstraService.getPathFromStartToEnd();
-        break;
-      case 'a-star':
-        path = this.aStarService.getPathFromStartToEnd();
-        break;
-      default:
-        break;
-    }
+    let path: Node[] = getPathFromStartToEnd(
+      this.nodes,
+      this.start,
+      this.end,
+      this.rows,
+      this.columns
+    );
     for (let i = path.length - 1; i >= 0; i--) {
-      const t = setTimeout(() => {
+      if (this.animation) {
+        const t = setTimeout(() => {
+          this.nodes[path[i].coordinates.y][path[i].coordinates.x].isInPath =
+            true;
+
+          if (i === 0) this.running = false;
+        }, 100 * (i - path.length));
+        this.timeouts.push(t);
+      } else {
         this.nodes[path[i].coordinates.y][path[i].coordinates.x].isInPath =
           true;
-
-        if (i === 0) this.running = false;
-      }, 100 * (i - path.length));
-      this.timeouts.push(t);
+      }
     }
+
+    if (path.length === 0 || !this.animation) this.running = false;
   }
 
   private resetNodes() {
