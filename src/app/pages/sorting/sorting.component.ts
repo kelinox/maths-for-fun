@@ -90,12 +90,11 @@ export class SortingComponent implements OnInit {
   mergeSort() {
     this.timeouts = resetTimeout(this.timeouts);
     this.sorted = resetMoved(this.unsorted);
-
     const tracker: any[] = [];
     let numbers = this.sorted.map((e) => e.value);
     console.log(numbers.map((e) => e));
     numbers = mergeSort(numbers, 0, tracker);
-    console.log(numbers);
+    //console.log(numbers);
     this.displayMoves(tracker);
   }
 
@@ -117,7 +116,6 @@ export class SortingComponent implements OnInit {
     }, timer);
   }
 }
-
 const mergeSort = (array: any[], start: number, tracker: any[]): any[] => {
   var tmp = array.map((e) => e);
   const half = Math.round(tmp.length / 2);
@@ -128,9 +126,13 @@ const mergeSort = (array: any[], start: number, tracker: any[]): any[] => {
   }
 
   const left = tmp.splice(0, half);
+  console.log(left);
+  console.log(tmp);
+  console.log(start);
+  console.log(half);
   return merge(
-    mergeSort(left, 0, tracker),
-    mergeSort(tmp, half, tracker),
+    mergeSort(left, start, tracker),
+    mergeSort(tmp, half + start, tracker),
     start,
     half + start,
     tracker
@@ -145,21 +147,24 @@ const merge = (
   tracker: any[]
 ): any[] => {
   let arr = [];
+  let tmpLeft: any = null;
+  // console.log(startLeft);
+  // console.log(startRight);
   // Break out of loop if any one of the array gets empty
   while (left.length && right.length) {
     // Pick the smaller among the smallest element of left and right sub arrays
     if (left[0] < right[0]) {
       arr.push(left.shift());
+
       startLeft++;
     } else {
       tracker.push([startLeft, startRight]);
-      if (startLeft + 1 !== startRight)
-        tracker.push([startLeft + 1, startRight]);
+      tmpLeft = startRight;
       arr.push(right.shift());
       startRight++;
     }
   }
-  console.log(tracker.map((e) => e));
+  //console.log(tracker.map((e) => e));
 
   return [...arr, ...left, ...right];
 };
