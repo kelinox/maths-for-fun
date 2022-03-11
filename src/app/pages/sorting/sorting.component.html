@@ -1,0 +1,27 @@
+<div class="flex flex-1 justify-center p-11 flex-col">
+  <div class="flex items-center mb-8">
+    <button class="btn-outline-primary mr-4" (click)="bubbleSort()">
+      Bubble sort
+    </button>
+    <button class="btn-outline-primary mr-4" (click)="quickSort()">
+      Quick sort
+    </button>
+    <button class="btn-outline-primary" (click)="mergeSort()">
+      Merge sort
+    </button>
+  </div>
+  <div class="flex items-end">
+    <div
+      class="bg-blue-300 border border-black"
+      *ngFor="let item of sorted"
+      style="width: 40px"
+      [ngStyle]="{ height: (item.value * 500) / max + 'px' }"
+    ></div>
+  </div>
+  <div class="flex justify-center items-center">
+    <button class="btn-primary rounded-full" (click)="stop()">Stop</button>
+  </div>
+  <div class="flex justify-center items-center">
+    <button class="btn-primary rounded-full" (click)="reset()">Reset</button>
+  </div>
+</div>

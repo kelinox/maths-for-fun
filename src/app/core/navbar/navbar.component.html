@@ -50,7 +50,11 @@
         <p class="sidebar-heading">Sorting</p>
         <ul class="sidebar-group-items">
           <li>
-            <a class="sidebar-link" routerLink="pathfinding" id="pathfinding"
+            <a
+              [ngClass]="{ active: currentLink === 'sorting' }"
+              class="sidebar-link"
+              routerLink="sorting"
+              id="sorting"
               >What's sorting?</a
             >
             <ul class="sidebar-sub-headers">

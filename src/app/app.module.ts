@@ -12,7 +12,8 @@ import { DijkstraService } from './services/dijkstra.service';
 import { FormsModule } from '@angular/forms';
 import { AStarService } from './services/a-star.service';
 import { PathFindingService } from './services/path-finding.service';
-import { DijkstraComponent } from './dijkstra/dijkstra.component';
+import { DijkstraComponent } from './pages/dijkstra/dijkstra.component';
+import { SortingComponent } from './pages/sorting/sorting.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { DijkstraComponent } from './dijkstra/dijkstra.component';
     GridComponent,
     GridItemComponent,
     DijkstraComponent,
+    SortingComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [DijkstraService, AStarService, PathFindingService],

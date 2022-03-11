@@ -174,3 +174,12 @@ export const hasBeenVisited = (node: Node): Node => {
   node.visited = true;
   return node;
 };
+
+export const resetTimeout = (timeouts: number[]): number[] => {
+  for (let i = 0; i < timeouts.length; i++) {
+    const t = timeouts[i];
+    clearTimeout(t);
+  }
+
+  return [];
+};
