@@ -11,15 +11,15 @@ import { DijkstraService } from 'src/app/services/dijkstra.service';
   styleUrls: ['./pathfinding.component.sass'],
 })
 export class PathfindingComponent implements OnInit {
-  columns = 40;
-  rows = 40;
+  columns = 20;
+  rows = 20;
   get start(): Point {
     return { x: this.startX, y: this.startY };
   }
-  startX = 20;
-  startY = 18;
-  endX = 30;
-  endY = 30;
+  startX = 0;
+  startY = 0;
+  endX = 19;
+  endY = 19;
   get end(): Point {
     return { x: this.endX, y: this.endY };
   }
@@ -168,7 +168,15 @@ export class PathfindingComponent implements OnInit {
 
   private resetNodes() {
     this.nodes.forEach((r) =>
-      r.forEach((n) => ((n.visited = false), (n.isInPath = false)))
+      r.forEach(
+        (n) => (
+          (n.visited = false),
+          (n.isInPath = false),
+          (n.distanceToStart = Number.MAX_SAFE_INTEGER),
+          (n.distanceToEndCalculated = false),
+          (n.distanceToEnd = Number.MAX_SAFE_INTEGER)
+        )
+      )
     );
   }
 
