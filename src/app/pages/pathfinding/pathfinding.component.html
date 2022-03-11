@@ -51,9 +51,13 @@
       </div>
     </div>
     <div class="mb-6 flex">
-      <button class="text-xs mr-4 btn-primary" (click)="initNodes()">
+      <button class="mr-4 btn-outline-primary" (click)="initNodes()">
         <span class="mr-1">Generate</span>
-        <img class="w-4 h-4 text-white" src="./assets/svg/share.svg" alt="" />
+        <img
+          class="w-4 h-4 text-blue-500"
+          src="./assets/svg/share.svg"
+          alt=""
+        />
       </button>
     </div>
     <div class="mr-4 flex items-center mb-8" *ngIf="nodes.length > 0">
@@ -68,7 +72,7 @@
           <option value="a-star">A star</option>
         </select>
       </div>
-      <div class="flex items-center">
+      <div class="flex items-center mr-8">
         <label
           for="toggle-example"
           class="flex items-center cursor-pointer relative"
@@ -87,22 +91,31 @@
           >
         </label>
       </div>
+      <button
+        *ngIf="algo && !running"
+        (click)="startPathFinding()"
+        class="btn-primary text-xs"
+      >
+        <span class="mr-2">Start</span>
+        <img
+          class="w-6 mx-auto text-white"
+          src="./assets/svg/play.svg"
+          alt=""
+        />
+      </button>
+      <button
+        *ngIf="running"
+        (click)="stopPathFinding()"
+        class="btn-primary h-"
+      >
+        <span class="mr-2">Stop</span>
+        <img
+          class="w-6 mx-auto text-white"
+          src="./assets/svg/stop.svg"
+          alt=""
+        />
+      </button>
     </div>
     <app-grid [nodes]="nodes"></app-grid>
   </div>
-
-  <button
-    *ngIf="algo && !running"
-    (click)="startPathFinding()"
-    class="inline-block rounded-full bg-blue-600 text-white leading-normal uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-14 h-14 absolute bottom-8 right-8"
-  >
-    <img class="w-7 mx-auto text-white" src="./assets/svg/play.svg" alt="" />
-  </button>
-  <button
-    *ngIf="running"
-    (click)="stopPathFinding()"
-    class="justify-center items-center inline-block rounded-full bg-blue-600 text-white leading-normal uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-14 h-14 absolute bottom-8 right-8"
-  >
-    <img class="w-7 mx-auto text-white" src="./assets/svg/stop.svg" alt="" />
-  </button>
 </div>
