@@ -1,27 +1,144 @@
 <div class="flex flex-1 justify-center p-11 flex-col">
-  <div class="flex items-center mb-8">
-    <button class="btn-outline-primary mr-4" (click)="bubbleSort()">
-      Bubble sort
+  <div class="flex mb-8">
+    <div class="flex items-center mr-8">
+      <label class="mr-2" for="size">Size of the array</label>
+      <input class="input" type="number" id="size" [(ngModel)]="size" />
+    </div>
+    <div class="flex items-center mr-8">
+      <label
+        for="toggle-example"
+        class="flex items-center cursor-pointer relative"
+      >
+        <input
+          type="checkbox"
+          id="toggle-example"
+          class="sr-only"
+          [(ngModel)]="animation"
+        />
+        <div
+          class="toggle-bg bg-gray-200 border-2 border-gray-200 h-6 w-11 rounded-full"
+        ></div>
+        <span class="ml-3 text-gray-900 text-sm font-medium"
+          >Activate animation</span
+        >
+      </label>
+    </div>
+    <div class="flex items-center mr-8">
+      <label class="mr-2" for="">Animation speed</label>
+      <select name="" id="" [(ngModel)]="animationSpeed">
+        <option value="1">Fast</option>
+        <option value="2">Normal</option>
+        <option value="3">Slow</option>
+      </select>
+    </div>
+  </div>
+  <div *ngIf="sorted.length > 0" class="flex items-center mb-8">
+    <button class="btn-outline-primary mr-4 bg-blue" (click)="bubbleSort()">
+      <span class="mr-1">Bubble sort</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="#2563eb"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+        />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
     </button>
     <button class="btn-outline-primary mr-4" (click)="quickSort()">
-      Quick sort
+      <span class="mr-1">Quick sort</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="#2563eb"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+        />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
     </button>
     <button class="btn-outline-primary" (click)="mergeSort()">
-      Merge sort
+      <span class="mr-1">Merge sort</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="#2563eb"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+        />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
     </button>
   </div>
-  <div class="flex items-end">
+  <div *ngIf="sorted.length > 0" class="flex items-end mb-8">
     <div
       class="bg-blue-300 border border-black"
+      [ngClass]="{
+        moved: item.moved
+      }"
       *ngFor="let item of sorted"
-      style="width: 40px"
-      [ngStyle]="{ height: (item.value * 500) / max + 'px' }"
+      [ngStyle]="{
+        height: (item.value * 500) / max + 'px',
+        width: widthItem + 'px'
+      }"
     ></div>
   </div>
-  <div class="flex justify-center items-center">
-    <button class="btn-primary rounded-full" (click)="stop()">Stop</button>
-  </div>
-  <div class="flex justify-center items-center">
-    <button class="btn-primary rounded-full" (click)="reset()">Reset</button>
+  <div class="flex flex-1 justify-center items-center">
+    <button
+      *ngIf="running"
+      class="btn-rounded-primary mr-4 w-12 h-12"
+      (click)="stop()"
+    >
+      <img class="w-9 mx-auto" src="./assets/svg/stop.svg" alt="" />
+    </button>
+    <button
+      class="btn-rounded-outline-primary mr-4 w-10 h-10"
+      (click)="reset()"
+    >
+      <svg
+        class="w-8 mx-auto text-red"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+        />
+      </svg>
+    </button>
   </div>
 </div>

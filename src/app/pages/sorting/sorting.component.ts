@@ -11,25 +11,31 @@ export class SortingComponent implements OnInit {
   unsorted: any[] = [];
   widthItem = 20;
   max = 0;
-  size = 10;
+  size = 30;
   maxItem = 100;
   timeouts: any[] = [];
   paused = false;
   tracker = [];
   step = -1;
+  animation = true;
+  running = false;
+  animationSpeed = 1;
 
   constructor() {}
 
   ngOnInit(): void {
-    this.generateRandomList(this.size, this.maxItem);
+    //this.generateRandomList(this.size, this.maxItem);
   }
 
   stop() {
     this.timeouts = resetTimeout(this.timeouts);
+    this.running = false;
+    this.sorted = this.unsorted.map((e) => e);
   }
 
   reset() {
     this.timeouts = resetTimeout(this.timeouts);
+    this.running = false;
     this.generateRandomList(this.size, this.maxItem);
   }
 
@@ -50,11 +56,11 @@ export class SortingComponent implements OnInit {
 
     this.unsorted = numbers;
     this.sorted = numbers.map((e) => e);
-    this.widthItem = (window.innerWidth - 80) / numbers.length;
     this.max = max;
   }
 
   bubbleSort() {
+    this.running = true;
     this.timeouts = resetTimeout(this.timeouts);
     this.sorted = resetMoved(this.unsorted);
 
@@ -78,6 +84,7 @@ export class SortingComponent implements OnInit {
    * And will display the moves made to sort the list
    */
   quickSort() {
+    this.running = true;
     this.timeouts = resetTimeout(this.timeouts);
     this.sorted = resetMoved(this.unsorted);
     const tracker: any[] = [];
@@ -88,20 +95,40 @@ export class SortingComponent implements OnInit {
   }
 
   mergeSort() {
+    this.running = true;
     this.timeouts = resetTimeout(this.timeouts);
     this.sorted = resetMoved(this.unsorted);
     const tracker: any[] = [];
     let numbers = this.sorted.map((e) => e.value);
-    console.log(numbers.map((e) => e));
     numbers = mergeSort(numbers, 0, tracker);
-    //console.log(numbers);
-    this.displayMoves(tracker);
+    this.displayMovesMergeSort(tracker);
   }
 
   displayMoves(tracker: any[]) {
+    console.log(animationSpeed(this.animationSpeed));
     for (let i = 0; i < tracker.length; i++) {
-      this.timeouts.push(this.displaySwap(tracker, i, 500 * i));
+      this.timeouts.push(
+        this.displaySwap(tracker, i, animationSpeed(this.animationSpeed) * i)
+      );
     }
+  }
+
+  displayMovesMergeSort(tracker: any[]) {
+    tracker.forEach((e, index) => {
+      for (let i = 0; i < e.tmp.length; i++) {
+        this.timeouts.push(
+          setTimeout(() => {
+            setMoved(this.sorted, false);
+            this.sorted[i + e.startLeft].value = e.tmp[i];
+            this.sorted[i + e.startLeft].moved = true;
+
+            if (index === tracker.length - 1 && i === e.tmp.length - 1) {
+              this.running = false;
+            }
+          }, animationSpeed(this.animationSpeed) * index * i)
+        );
+      }
+    });
   }
 
   displaySwap(tracker: any, i: any, timer: any): any {
@@ -113,6 +140,7 @@ export class SortingComponent implements OnInit {
       this.sorted[tracker[i][1]].moved = true;
 
       this.step = i + 1;
+      if (i === tracker.length - 1) this.running = false;
     }, timer);
   }
 }
@@ -126,15 +154,10 @@ const mergeSort = (array: any[], start: number, tracker: any[]): any[] => {
   }
 
   const left = tmp.splice(0, half);
-  console.log(left);
-  console.log(tmp);
-  console.log(start);
-  console.log(half);
   return merge(
     mergeSort(left, start, tracker),
     mergeSort(tmp, half + start, tracker),
     start,
-    half + start,
     tracker
   );
 };
@@ -143,47 +166,26 @@ const merge = (
   left: any[],
   right: any[],
   startLeft: number,
-  startRight: number,
   tracker: any[]
 ): any[] => {
   let arr = [];
-  let tmpLeft: any = null;
-  // console.log(startLeft);
-  // console.log(startRight);
+
   // Break out of loop if any one of the array gets empty
   while (left.length && right.length) {
     // Pick the smaller among the smallest element of left and right sub arrays
     if (left[0] < right[0]) {
       arr.push(left.shift());
-
-      startLeft++;
     } else {
-      tracker.push([startLeft, startRight]);
-      tmpLeft = startRight;
       arr.push(right.shift());
-      startRight++;
     }
   }
-  //console.log(tracker.map((e) => e));
 
-  return [...arr, ...left, ...right];
-};
-
-const arraycopy = (
-  src: any[],
-  srcPos: any,
-  dst: any[],
-  dstPos: any,
-  length: any,
-  tracker: any[]
-) => {
-  let j = dstPos;
-  let tempArr = src.slice(srcPos, srcPos + length);
-  for (let e in tempArr) {
-    tracker.push([j, e]);
-    dst[j] = tempArr[e];
-    j++;
-  }
+  const tmp = [...arr, ...left, ...right];
+  tracker.push({
+    startLeft,
+    tmp,
+  });
+  return tmp;
 };
 
 const switchElement = (array: any[], i: number, j: number) => {
@@ -257,4 +259,18 @@ const partition = (array: any[], start: any, end: any, tracker: any[]) => {
     }
   }
   return i;
+};
+
+const animationSpeed = (speed: any): number => {
+  switch (speed) {
+    case '1':
+      return 5;
+    case '2':
+      return 25;
+    case '3':
+      return 100;
+
+    default:
+      return 5;
+  }
 };

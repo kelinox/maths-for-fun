@@ -18,3 +18,23 @@ app-pathfinding
 
 .btn-outline-primary
     @apply flex items-center justify-between inline-block px-6 py-2.5 border-2 border-blue-600 text-blue-600 font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-200 hover:shadow-lg focus:bg-blue-200 focus:shadow-lg focus:outline-none focus:ring-0 transition duration-150 ease-in-out
+
+.btn-rounded-primary
+    @apply inline-block rounded-full bg-blue-600 text-white leading-normal uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out
+
+.btn-rounded-outline-primary
+    @apply inline-block rounded-full border-2 border-blue-600 text-blue-600 leading-normal uppercase shadow-md hover:bg-blue-200 hover:shadow-lg transition duration-150 ease-in-out
+
+.input
+    @apply p-1 border-2 border-gray-200 rounded-md outline-none focus:border-blue-500 w-24
+
+.toggle-bg:after
+    content: ''
+    @apply absolute top-0.5 left-0.5 bg-white border border-gray-300 rounded-full h-5 w-5 transition shadow-sm
+
+input:checked + .toggle-bg:after
+    transform: translateX(100%)
+    @apply border-white
+
+input:checked + .toggle-bg
+    @apply bg-blue-500 border-blue-500 shadow-lg

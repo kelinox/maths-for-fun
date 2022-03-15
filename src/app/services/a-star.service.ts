@@ -49,8 +49,6 @@ export class AStarService extends PathFindingService {
         ); //
         tmpNodes[neighbors[i].y][neighbors[i].x] = node;
 
-        console.log(nodesToVisite);
-        console.log(node);
         if (
           !node.obstacle &&
           nodesToVisite.find(
