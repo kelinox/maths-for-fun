@@ -14,6 +14,7 @@ import { AStarService } from './services/a-star.service';
 import { PathFindingService } from './services/path-finding.service';
 import { DijkstraComponent } from './pages/dijkstra/dijkstra.component';
 import { SortingComponent } from './pages/sorting/sorting.component';
+import { Graph } from './models/graph';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import { SortingComponent } from './pages/sorting/sorting.component';
     SortingComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
-  providers: [DijkstraService, AStarService, PathFindingService],
+  providers: [DijkstraService, AStarService, PathFindingService, Graph],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

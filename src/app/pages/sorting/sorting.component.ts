@@ -105,7 +105,6 @@ export class SortingComponent implements OnInit {
   }
 
   displayMoves(tracker: any[]) {
-    console.log(animationSpeed(this.animationSpeed));
     for (let i = 0; i < tracker.length; i++) {
       this.timeouts.push(
         this.displaySwap(tracker, i, animationSpeed(this.animationSpeed) * i)
@@ -115,19 +114,19 @@ export class SortingComponent implements OnInit {
 
   displayMovesMergeSort(tracker: any[]) {
     tracker.forEach((e, index) => {
-      for (let i = 0; i < e.tmp.length; i++) {
-        this.timeouts.push(
-          setTimeout(() => {
-            setMoved(this.sorted, false);
+      this.timeouts.push(
+        setTimeout(() => {
+          for (let i = 0; i < e.tmp.length; i++) {
+            this.sorted.forEach((x) => (x.moved = false));
             this.sorted[i + e.startLeft].value = e.tmp[i];
             this.sorted[i + e.startLeft].moved = true;
 
             if (index === tracker.length - 1 && i === e.tmp.length - 1) {
               this.running = false;
             }
-          }, animationSpeed(this.animationSpeed) * index * i)
-        );
-      }
+          }
+        }, animationSpeed(this.animationSpeed) * index)
+      );
     });
   }
 
@@ -135,7 +134,7 @@ export class SortingComponent implements OnInit {
     return setTimeout(() => {
       switchElement(this.sorted, tracker[i][0], tracker[i][1]);
 
-      setMoved(this.sorted, false);
+      this.sorted = setMoved(this.sorted, false);
       this.sorted[tracker[i][0]].moved = true;
       this.sorted[tracker[i][1]].moved = true;
 
@@ -148,7 +147,6 @@ const mergeSort = (array: any[], start: number, tracker: any[]): any[] => {
   var tmp = array.map((e) => e);
   const half = Math.round(tmp.length / 2);
 
-  // Base case or terminating case
   if (tmp.length < 2) {
     return tmp;
   }
@@ -181,10 +179,12 @@ const merge = (
   }
 
   const tmp = [...arr, ...left, ...right];
-  tracker.push({
-    startLeft,
-    tmp,
-  });
+  if (tmp.length > 0) {
+    tracker.push({
+      startLeft,
+      tmp: tmp.map((e) => e),
+    });
+  }
   return tmp;
 };
 
@@ -198,8 +198,10 @@ const switchElement = (array: any[], i: number, j: number) => {
  * @param {any[]} numbers
  * @param {boolean} moved
  */
-const setMoved = (numbers: any[], moved: any) => {
-  numbers.map((e) => (e.moved = moved));
+const setMoved = (numbers: any[], moved: boolean) => {
+  return numbers.map((e) => {
+    return { value: e.value, moved };
+  });
 };
 
 /**

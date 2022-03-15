@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { getPathFromStartToEnd } from 'src/app/extensions';
+import { Graph } from 'src/app/models/graph';
 import Node from 'src/app/models/node';
 import Point from 'src/app/models/point';
 import { AStarService } from 'src/app/services/a-star.service';
-import { DijkstraService } from 'src/app/services/dijkstra.service';
 
 @Component({
   selector: 'app-pathfinding',
@@ -23,43 +23,28 @@ export class PathfindingComponent implements OnInit {
   get end(): Point {
     return { x: this.endX, y: this.endY };
   }
-  nodes: Node[][] = [];
+  get nodes(): Node[][] {
+    return this.graph.getNodes();
+  }
+
   hasWeight = false;
   running = false;
   timeouts: any[] = [];
   algo: string = '';
   animation = true;
 
-  constructor(
-    private readonly dijkstraService: DijkstraService,
-    private readonly aStarService: AStarService
-  ) {}
+  constructor(private graph: Graph) {}
 
   ngOnInit(): void {}
 
   initNodes() {
-    this.resetTimeout();
-    this.nodes = [];
-    for (let i = 0; i < this.rows; i++) {
-      const currentRow: Node[] = [];
-      for (let j = 0; j < this.columns; j++) {
-        const isStart = this.start.x === j && this.start.y === i;
-        const isEnd = this.end.x === j && this.end.y === i;
-        const weight = this.getWeight(j, i);
-        currentRow.push({
-          coordinates: { x: j, y: i },
-          visited: false,
-          weight: weight,
-          distanceToStart: Number.MAX_SAFE_INTEGER,
-          isStart,
-          isEnd,
-          isInPath: false,
-          distanceToEnd: Number.MAX_SAFE_INTEGER,
-          obstacle: weight > 150,
-        });
-      }
-      this.nodes.push(currentRow);
-    }
+    this.graph = this.graph.generate(
+      this.rows,
+      this.columns,
+      this.start,
+      this.end,
+      this.hasWeight
+    );
   }
 
   startPathFinding() {
@@ -77,70 +62,55 @@ export class PathfindingComponent implements OnInit {
 
   stopPathFinding() {
     this.resetTimeout();
-    this.resetNodes();
     this.running = false;
   }
 
   private startDijkstra() {
     this.running = true;
     this.resetTimeout();
-    this.resetNodes();
-    var visitedNodes = this.dijkstraService.execute(
-      this.nodes,
-      this.start,
-      this.end,
-      this.columns,
-      this.rows
-    );
-    this.showVisitedNodes(visitedNodes);
+    this.graph = this.graph
+      .resetNodes()
+      .executeDijkstra(this.rows, this.columns, this.start, this.end)
+      .showVisitedNodes(this.showVisitedNodes, this);
   }
 
   private startAStar() {
     this.running = true;
     this.resetTimeout();
-    this.resetNodes();
-    var visitedNodes = this.aStarService.execute(
-      this.nodes,
-      this.start,
-      this.end,
-      this.columns,
-      this.rows
-    );
-    this.showVisitedNodes(visitedNodes);
+    this.graph = this.graph
+      .resetNodes()
+      .executeAStar(this.rows, this.columns, this.start, this.end)
+      .showVisitedNodes(this.showVisitedNodes, this);
   }
 
-  private getWeight(x: number, y: number): number {
-    const isStart = this.start.x === x && this.start.y === y;
-    const isEnd = this.end.x === x && this.end.y === y;
-    return isStart || isEnd || !this.hasWeight
-      ? 1
-      : Math.floor(Math.random() * (200 - 1 + 1)) + 1;
-  }
-
-  private showVisitedNodes(visitedNodes: Node[]) {
+  private showVisitedNodes(visitedNodes: Node[], self: PathfindingComponent) {
     for (let i = 0; i < visitedNodes.length; i++) {
-      if (this.animation) {
+      if (self.animation) {
         const t = setTimeout(() => {
-          this.nodes[visitedNodes[i].coordinates.y][
-            visitedNodes[i].coordinates.x
-          ] = visitedNodes[i];
+          self.graph = self.graph.updateNode(
+            visitedNodes[i].coordinates.x,
+            visitedNodes[i].coordinates.y,
+            visitedNodes[i]
+          );
 
-          if (i === visitedNodes.length - 1) this.getPathFromStartToEnd();
+          if (i === visitedNodes.length - 1) self.showPathFromStartToEnd();
         }, 1 * i);
-        this.timeouts.push(t);
+        self.timeouts.push(t);
       } else {
-        this.nodes[visitedNodes[i].coordinates.y][
-          visitedNodes[i].coordinates.x
-        ] = visitedNodes[i];
+        self.graph = self.graph.updateNode(
+          visitedNodes[i].coordinates.x,
+          visitedNodes[i].coordinates.y,
+          visitedNodes[i]
+        );
       }
     }
 
-    if (!this.animation) {
-      this.getPathFromStartToEnd();
+    if (!self.animation) {
+      self.showPathFromStartToEnd();
     }
   }
 
-  private getPathFromStartToEnd() {
+  private showPathFromStartToEnd() {
     let path: Node[] = getPathFromStartToEnd(
       this.nodes,
       this.start,
@@ -164,20 +134,6 @@ export class PathfindingComponent implements OnInit {
     }
 
     if (path.length === 0 || !this.animation) this.running = false;
-  }
-
-  private resetNodes() {
-    this.nodes.forEach((r) =>
-      r.forEach(
-        (n) => (
-          (n.visited = false),
-          (n.isInPath = false),
-          (n.distanceToStart = Number.MAX_SAFE_INTEGER),
-          (n.distanceToEndCalculated = false),
-          (n.distanceToEnd = Number.MAX_SAFE_INTEGER)
-        )
-      )
-    );
   }
 
   private resetTimeout() {
