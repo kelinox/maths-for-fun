@@ -23,14 +23,12 @@ export class SortingComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {
-    //this.generateRandomList(this.size, this.maxItem);
-  }
+  ngOnInit(): void {}
 
   stop() {
     this.timeouts = resetTimeout(this.timeouts);
     this.running = false;
-    this.sorted = this.unsorted.map((e) => e);
+    this.sorted = copyArrayJSON(this.unsorted);
   }
 
   reset() {
@@ -55,14 +53,14 @@ export class SortingComponent implements OnInit {
     }
 
     this.unsorted = numbers;
-    this.sorted = numbers.map((e) => e);
+    this.sorted = copyArrayJSON(this.unsorted);
     this.max = max;
   }
 
   bubbleSort() {
     this.running = true;
     this.timeouts = resetTimeout(this.timeouts);
-    this.sorted = resetMoved(this.unsorted);
+    this.sorted = copyArrayJSON(this.unsorted);
 
     const numbers = this.sorted.map((e) => e.value);
     const tracker = [];
@@ -86,18 +84,19 @@ export class SortingComponent implements OnInit {
   quickSort() {
     this.running = true;
     this.timeouts = resetTimeout(this.timeouts);
-    this.sorted = resetMoved(this.unsorted);
+    this.sorted = copyArrayJSON(this.unsorted);
     const tracker: any[] = [];
     let numbers = this.sorted.map((e) => e.value);
     qs(numbers, 0, numbers.length - 1, tracker);
 
     this.displayMoves(tracker);
+    console.log(this.unsorted.map((e) => e));
   }
 
   mergeSort() {
     this.running = true;
     this.timeouts = resetTimeout(this.timeouts);
-    this.sorted = resetMoved(this.unsorted);
+    this.sorted = copyArrayJSON(this.unsorted);
     const tracker: any[] = [];
     let numbers = this.sorted.map((e) => e.value);
     numbers = mergeSort(numbers, 0, tracker);
@@ -275,4 +274,8 @@ const animationSpeed = (speed: any): number => {
     default:
       return 5;
   }
+};
+
+const copyArrayJSON = (array: any[]): any[] => {
+  return JSON.parse(JSON.stringify(array));
 };
