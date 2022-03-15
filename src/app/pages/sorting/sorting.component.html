@@ -102,14 +102,15 @@
   </div>
   <div *ngIf="sorted.length > 0" class="flex items-end mb-8">
     <div
-      class="bg-blue-300 border border-black"
+      class="border border-black text-black"
       [ngClass]="{
         moved: item.moved
       }"
       *ngFor="let item of sorted"
       [ngStyle]="{
         height: (item.value * 500) / max + 'px',
-        width: widthItem + 'px'
+        width: widthItem + 'px',
+        'background-color': item.color
       }"
     ></div>
   </div>

@@ -49,8 +49,13 @@ export class SortingComponent implements OnInit {
       numbers.push({
         value: Math.floor(Math.random() * max),
         moved: false,
+        color: 0,
       });
     }
+
+    numbers.forEach((e) => {
+      e.color = intToHex(e.value / this.maxItem);
+    });
 
     this.unsorted = numbers;
     this.sorted = copyArrayJSON(this.unsorted);
@@ -118,6 +123,9 @@ export class SortingComponent implements OnInit {
           for (let i = 0; i < e.tmp.length; i++) {
             this.sorted.forEach((x) => (x.moved = false));
             this.sorted[i + e.startLeft].value = e.tmp[i];
+            this.sorted[i + e.startLeft].color = intToHex(
+              e.tmp[i] / this.maxItem
+            );
             this.sorted[i + e.startLeft].moved = true;
 
             if (index === tracker.length - 1 && i === e.tmp.length - 1) {
@@ -199,7 +207,7 @@ const switchElement = (array: any[], i: number, j: number) => {
  */
 const setMoved = (numbers: any[], moved: boolean) => {
   return numbers.map((e) => {
-    return { value: e.value, moved };
+    return { value: e.value, moved, color: e.color };
   });
 };
 
@@ -278,4 +286,17 @@ const animationSpeed = (speed: any): number => {
 
 const copyArrayJSON = (array: any[]): any[] => {
   return JSON.parse(JSON.stringify(array));
+};
+
+const intToHex = (colorNumber: number) => {
+  function toHex(n: any) {
+    n = n.toString(16) + '';
+    console.log(n);
+    return n.length == 2 ? n : new Array(2 - n.length + 1).join('0') + n;
+  }
+
+  var r = Math.round(colorNumber * 256),
+    g = 125, //toHex(Math.floor(colorNumber / 256) % 256),
+    b = 0; //toHex(colorNumber % 256);
+  return `rgba(${r}, 125, 0, 1)`;
 };
