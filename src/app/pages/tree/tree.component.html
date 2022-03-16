@@ -1,0 +1,33 @@
+<div class="flex flex-1 justify-center p-11 flex-col h-full">
+  <div class="flex items-center">
+    <label class="mr-4" for="data">Number to add</label>
+    <input
+      class="input mr-8"
+      type="number"
+      name="data"
+      id="data"
+      [(ngModel)]="data"
+    />
+    <button class="btn-primary mr-8" (click)="addToGraph()">Add</button>
+    <button class="btn-outline-primary" (click)="reset()">Reset</button>
+  </div>
+  <div class="mt-10 flex items-center">
+    <button class="btn-outline-primary mr-8" (click)="dfs()">Dfs</button>
+    <button class="btn-outline-primary" (click)="bfs()">Bfs</button>
+  </div>
+  <div class="mt-10 relative items-stretch flex-1">
+    <div
+      *ngFor="let node of nodes; trackBy: treeNodeTrackBy"
+      class="tree-node"
+      [ngClass]="{
+        visited: node.visited
+      }"
+      [ngStyle]="{
+        top: node.top + 'px',
+        left: node.left + 'px'
+      }"
+    >
+      {{ node.data }}
+    </div>
+  </div>
+</div>
