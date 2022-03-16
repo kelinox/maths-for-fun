@@ -1,4 +1,9 @@
 import { Injectable } from '@angular/core';
+import {
+  getClosestNodeToEnd,
+  getNeighbors,
+  removeElement,
+} from '../extensions';
 import { PathfindingComponent } from '../pages/pathfinding/pathfinding.component';
 import { AStarService } from '../services/a-star.service';
 import { DijkstraService } from '../services/dijkstra.service';
@@ -71,6 +76,43 @@ export class Graph {
     );
 
     return this;
+  }
+
+  public setDistanceToEnd(end: Point, rows: number, columns: number) {
+    this.nodes = this.calculateDistanceToEnd(this.nodes, end, rows, columns);
+
+    return this;
+  }
+
+  private calculateDistanceToEnd(
+    nodes: Node[][],
+    end: Point,
+    rows: number,
+    columns: number
+  ): Node[][] {
+    const tmp = JSON.parse(JSON.stringify(nodes));
+    let currentNode = tmp[end.y][end.x];
+    currentNode.distanceToEnd = 0;
+    let nodeToVisit: Node[] = [];
+
+    while (currentNode !== undefined) {
+      var neighbors = getNeighbors(currentNode, rows, columns);
+
+      for (let i = 0; i < neighbors.length; i++) {
+        if (end.x !== neighbors[i].x || end.y !== neighbors[i].y) {
+          let n = tmp[neighbors[i].y][neighbors[i].x];
+          nodeToVisit.push(n);
+          if (n.distanceToEnd === Number.MAX_SAFE_INTEGER) {
+            n.distanceToEnd = currentNode.distanceToEnd + n.weight;
+          }
+        }
+      }
+
+      currentNode.distanceToEndCalculated = true;
+      currentNode = getClosestNodeToEnd(nodeToVisit);
+      nodeToVisit = removeElement(nodeToVisit, currentNode);
+    }
+    return tmp;
   }
 
   public executeAStar(rows: number, columns: number, start: Point, end: Point) {

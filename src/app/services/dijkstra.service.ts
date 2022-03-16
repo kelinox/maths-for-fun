@@ -34,8 +34,7 @@ export class DijkstraService extends PathFindingService {
       var neighbors = getNeighbors(currentNode, this.rows, this.columns);
       for (let i = 0; i < neighbors.length; i++) {
         const node = setDistanceToStart(
-          tmpNodes,
-          neighbors[i],
+          tmpNodes[neighbors[i].y][neighbors[i].x],
           start,
           currentNode.distanceToStart
         );
@@ -51,8 +50,14 @@ export class DijkstraService extends PathFindingService {
       nodesToVisite = removeElement(nodesToVisite, currentNode);
     }
 
-    if (currentNode === endNode)
+    if (currentNode === endNode) {
       nodes[end.y][end.x] = hasBeenVisited(nodes[end.y][end.x]);
+      nodes[end.y][end.x] = setDistanceToStart(
+        nodes[end.y][end.x],
+        start,
+        currentNode.distanceToStart
+      );
+    }
 
     return visitedNodes;
   }

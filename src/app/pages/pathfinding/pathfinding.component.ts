@@ -79,6 +79,7 @@ export class PathfindingComponent implements OnInit {
     this.resetTimeout();
     this.graph = this.graph
       .resetNodes()
+      .setDistanceToEnd(this.end, this.rows, this.columns)
       .executeAStar(this.rows, this.columns, this.start, this.end)
       .showVisitedNodes(this.showVisitedNodes, this);
   }

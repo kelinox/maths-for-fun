@@ -17,7 +17,13 @@ export const removeElement = (array: Node[], elementToRemove: Node): Node[] => {
 export const getClosestNodeToEnd = (nodes: Node[]) =>
   nodes
     .filter((n) => !n.distanceToEndCalculated && !n.obstacle)
-    .sort((a, b) => a.distanceToEnd - b.distanceToEnd)[0];
+    .sort((a, b) => {
+      if (a.distanceToEnd < b.distanceToEnd) {
+        return -1;
+      }
+
+      return 1;
+    })[0];
 
 export const getClosestNodeToStart = (nodes: Node[]) =>
   nodes
@@ -156,18 +162,16 @@ export const getClosestNeighbor = (
 };
 
 export const setDistanceToStart = (
-  nodes: Node[][],
-  neighbor: Point,
+  node: Node,
   start: Point,
   distanceToStart: number
 ) => {
-  let n = nodes[neighbor.y][neighbor.x];
-  if (start.x !== neighbor.x || start.y !== neighbor.y) {
-    if (!n.obstacle && n.distanceToStart === Number.MAX_SAFE_INTEGER)
-      n.distanceToStart = distanceToStart + n.weight;
+  if (start.x !== node.coordinates.x || start.y !== node.coordinates.y) {
+    if (!node.obstacle && node.distanceToStart === Number.MAX_SAFE_INTEGER)
+      node.distanceToStart = distanceToStart + node.weight;
   }
 
-  return n;
+  return node;
 };
 
 export const hasBeenVisited = (node: Node): Node => {

@@ -1,10 +1,28 @@
-<div
-  class="node text-xs flex justify-center items-center"
-  [ngClass]="{
-    start: node.isStart,
-    end: node.isEnd,
-    visited: node.visited && !node.isStart && !node.isEnd,
-    'node-in-path': node.isInPath && !node.isStart && !node.isEnd,
-    obstacle: node.obstacle
-  }"
-></div>
+<div class="relative group">
+  <div
+    class="node text-xs flex justify-center items-center hover:bg-blue-400"
+    [ngClass]="{
+      start: node.isStart,
+      end: node.isEnd,
+      visited: node.visited && !node.isStart && !node.isEnd,
+      'node-in-path': node.isInPath && !node.isStart && !node.isEnd,
+      obstacle: node.obstacle
+    }"
+  ></div>
+  <div
+    class="z-50 absolute p-4 bg-white shadow-lg hidden flex-col group-hover:flex left-full top-full"
+  >
+    <div class="flex flex-col items-center mb-2">
+      <p class="w-44 text-lg">Weight</p>
+      <p class="text-sm self-start font-bold">{{ node.weight }}</p>
+    </div>
+    <div class="flex flex-col items-center mb-2">
+      <p class="w-44 text-lg">Distance to start</p>
+      <p class="text-sm self-start font-bold">{{ node.distanceToStart }}</p>
+    </div>
+    <div class="flex flex-col items-center">
+      <p class="w-44 text-lg">Distance to end</p>
+      <p class="text-sm self-start font-bold">{{ node.distanceToEnd }}</p>
+    </div>
+  </div>
+</div>

@@ -95,7 +95,6 @@ export class SortingComponent implements OnInit {
     qs(numbers, 0, numbers.length - 1, tracker);
 
     this.displayMoves(tracker);
-    console.log(this.unsorted.map((e) => e));
   }
 
   mergeSort() {
@@ -110,44 +109,58 @@ export class SortingComponent implements OnInit {
 
   displayMoves(tracker: any[]) {
     for (let i = 0; i < tracker.length; i++) {
-      this.timeouts.push(
-        this.displaySwap(tracker, i, animationSpeed(this.animationSpeed) * i)
-      );
+      if (this.animation) {
+        this.timeouts.push(
+          this.displaySwap(tracker, i, animationSpeed(this.animationSpeed) * i)
+        );
+      } else {
+        this.displaySwitchBody(i, tracker);
+      }
     }
   }
 
   displayMovesMergeSort(tracker: any[]) {
     tracker.forEach((e, index) => {
-      this.timeouts.push(
-        setTimeout(() => {
-          for (let i = 0; i < e.tmp.length; i++) {
-            this.sorted.forEach((x) => (x.moved = false));
-            this.sorted[i + e.startLeft].value = e.tmp[i];
-            this.sorted[i + e.startLeft].color = intToHex(
-              e.tmp[i] / this.maxItem
-            );
-            this.sorted[i + e.startLeft].moved = true;
-
-            if (index === tracker.length - 1 && i === e.tmp.length - 1) {
-              this.running = false;
-            }
-          }
-        }, animationSpeed(this.animationSpeed) * index)
-      );
+      if (this.animation) {
+        this.timeouts.push(
+          setTimeout(() => {
+            this.displayMergeSort(e, index, tracker);
+          }, animationSpeed(this.animationSpeed) * index)
+        );
+      } else {
+        this.displayMergeSort(e, index, tracker);
+      }
     });
+  }
+
+  displayMergeSort(e: any, index: number, tracker: any[]) {
+    for (let i = 0; i < e.tmp.length; i++) {
+      this.sorted.forEach((x) => (x.moved = false));
+      this.sorted[i + e.startLeft].value = e.tmp[i];
+      this.sorted[i + e.startLeft].color = intToHex(e.tmp[i] / this.maxItem);
+      this.sorted[i + e.startLeft].moved = true;
+
+      if (index === tracker.length - 1 && i === e.tmp.length - 1) {
+        this.running = false;
+      }
+    }
   }
 
   displaySwap(tracker: any, i: any, timer: any): any {
     return setTimeout(() => {
-      switchElement(this.sorted, tracker[i][0], tracker[i][1]);
-
-      this.sorted = setMoved(this.sorted, false);
-      this.sorted[tracker[i][0]].moved = true;
-      this.sorted[tracker[i][1]].moved = true;
-
-      this.step = i + 1;
-      if (i === tracker.length - 1) this.running = false;
+      this.displaySwitchBody(i, tracker);
     }, timer);
+  }
+
+  displaySwitchBody(i: number, tracker: any[]) {
+    switchElement(this.sorted, tracker[i][0], tracker[i][1]);
+
+    //this.sorted = setMoved(this.sorted, false);
+    this.sorted[tracker[i][0]].moved = true;
+    this.sorted[tracker[i][1]].moved = true;
+
+    this.step = i + 1;
+    if (i === tracker.length - 1) this.running = false;
   }
 }
 const mergeSort = (array: any[], start: number, tracker: any[]): any[] => {
@@ -233,13 +246,6 @@ const qs = (array: any[], start: any, end: any, tracker: any[]) => {
   }
 };
 
-const resetMoved = (array: any[]): any[] => {
-  return array.map((e) => {
-    e.moved = false;
-    return e;
-  });
-};
-
 /**
  * Sort a certain part of an array using the quicksort method
  * return the index of the pivot in the array, which means that every value in the left
@@ -273,14 +279,14 @@ const partition = (array: any[], start: any, end: any, tracker: any[]) => {
 const animationSpeed = (speed: any): number => {
   switch (speed) {
     case '1':
-      return 5;
-    case '2':
       return 25;
+    case '2':
+      return 75;
     case '3':
-      return 100;
+      return 150;
 
     default:
-      return 5;
+      return 25;
   }
 };
 
@@ -289,14 +295,6 @@ const copyArrayJSON = (array: any[]): any[] => {
 };
 
 const intToHex = (colorNumber: number) => {
-  function toHex(n: any) {
-    n = n.toString(16) + '';
-    console.log(n);
-    return n.length == 2 ? n : new Array(2 - n.length + 1).join('0') + n;
-  }
-
-  var r = Math.round(colorNumber * 256),
-    g = 125, //toHex(Math.floor(colorNumber / 256) % 256),
-    b = 0; //toHex(colorNumber % 256);
+  var r = Math.round(colorNumber * 256);
   return `rgba(${r}, 125, 0, 1)`;
 };

@@ -42,8 +42,7 @@ export class AStarService extends PathFindingService {
 
       for (let i = 0; i < neighbors.length; i++) {
         const node = setDistanceToStart(
-          tmpNodes,
-          neighbors[i],
+          tmpNodes[neighbors[i].y][neighbors[i].x],
           start,
           currentNode.distanceToStart
         ); //
